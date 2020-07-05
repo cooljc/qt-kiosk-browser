@@ -21,51 +21,36 @@ Window {
     color: "black"
 
     Component.onCompleted: {
-        var xhr = new XMLHttpRequest();
+        var settings = configData.getConfig();
 
-        xhr.open("GET", "file:" + (Qt.application.arguments[1] || "settings.json"));
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.responseText.trim().length != 0) {
-                    try {
-                        var settings = JSON.parse(xhr.responseText);
-
-                        if (typeof settings["ScreenSaverTimeout"] != "undefined") {
-                            screenSaverTimer.interval = parseInt(settings["ScreenSaverTimeout"]);
-                        }
-
-                        if (typeof settings["RestartTimeout"] != "undefined") {
-                            restartTimer.interval = parseInt(settings["RestartTimeout"]);
-                        }
-
-                        if (typeof settings["URL"] != "undefined") {
-                            webView.url = settings["URL"];
-                        }
-
-                        for (var key in settings["WebEngineSettings"]) {
-                            if (typeof webView.settings[key] == "undefined") {
-                                console.error("Invalid settings property: " + key);
-                                continue;
-                            }
-
-                            webView.settings[key] = settings["WebEngineSettings"][key];
-                        }
-
-                        if (typeof settings["SplashScreen"] != "undefined") {
-                            splash.source = settings["SplashScreen"];
-                        }
-
-                        if (typeof settings["DisableContextMenu"] != "undefined") {
-                            webView.disableContextMenu = settings["DisableContextMenu"];
-                        }
-                    } catch (e) {
-                        console.error("Failed to parse settings file: " + e)
-                    }
-                }
-            }
+        if (typeof settings["ScreenSaverTimeout"] != "undefined") {
+            screenSaverTimer.interval = parseInt(settings["ScreenSaverTimeout"]);
         }
 
-        xhr.send();
+        if (typeof settings["RestartTimeout"] != "undefined") {
+            restartTimer.interval = parseInt(settings["RestartTimeout"]);
+        }
+
+        if (typeof settings["URL"] != "undefined") {
+            webView.url = settings["URL"];
+        }
+
+        for (var key in settings["WebEngineSettings"]) {
+            if (typeof webView.settings[key] == "undefined") {
+                console.error("Invalid settings property: " + key);
+                continue;
+            }
+
+            webView.settings[key] = settings["WebEngineSettings"][key];
+        }
+
+        if (typeof settings["SplashScreen"] != "undefined") {
+            splash.source = settings["SplashScreen"];
+        }
+
+        if (typeof settings["DisableContextMenu"] != "undefined") {
+            webView.disableContextMenu = settings["DisableContextMenu"];
+        }
     }
 
     WebEngineView {
